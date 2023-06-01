@@ -1,0 +1,128 @@
+
+Aim: Run a basic word count Map Reduce program to understand Map Reduce Paradigm.
+
+Theory:
+
+•	In MapReduce word count example, we find out the frequency of each word. 
+•	Here, the role of Mapper is to map the keys to the existing values and the role of Reducer is to aggregate the keys of common values. 
+•	So, everything is represented in the form of Key-value pair.
+
+
+MapReduce:
+
+•	MapReduce provides a method for parallel processing on distributed servers. Before processing data, MapReduce converts that large blocks into smaller data sets called tuples. 
+•	Tuples, in turn, can be organized and processed according to their key-value pairs. When MapReduce processing is complete, HDFS takes over and manages storage and distribution for the output. 
+•	The shorthand version of MapReduce is that it breaks big data blocks into smaller chunks that are easier to work with.
+•	The “Map” in MapReduce refers to the Map Tasks function. 
+•	Map Tasks is the process of formatting data into key-value pairs and assigning them to nodes for the “Reduce” function, which is executed by Reduce Tasks, where data is reduced to tuples. 
+•	Both Map Tasks and Reduce Tasks use worker nodes to carry out their functions.
+•	JobTracker is a component of the MapReduce engine that manages how client applications submit MapReduce jobs. 
+•	It distributes work to TaskTracker nodes. TaskTracker attempts to assign processing as close to
+where the data resides as possible.
+
+Note that MapReduce is not the only way to manage parallel processing in the
+Hadoop environment.
+
+
+Pre-requisite:
+•	Java Installation - Check whether the Java is installed or not using the following command.
+	java -version
+•	Hadoop Installation - Check whether the Hadoop is installed or not using the following command.
+	hadoop version
+
+Steps to execute MapReduce word count example
+Create a text file in your local machine and write some text into it.
+
+ 
+	
+Create a directory in HDFS, where to keep the text file.
+Upload the data.txt file on HDFS in the specific directory.
+ 	
+Write map reduce program for word count.
+1)	WCDriver.java
+package com.javatpoint;  
+import java.io.IOException;    
+import java.util.StringTokenizer;    
+import org.apache.hadoop.io.IntWritable;    
+import org.apache.hadoop.io.LongWritable;    
+import org.apache.hadoop.io.Text;    
+import org.apache.hadoop.mapred.MapReduceBase;    
+import org.apache.hadoop.mapred.Mapper;    
+import org.apache.hadoop.mapred.OutputCollector;    
+import org.apache.hadoop.mapred.Reporter;    
+public class WC_Mapper extends MapReduceBase implements Mapper<LongWritable,Text,Text,IntWritable>{    
+    private final static IntWritable one = new IntWritable(1);    
+    private Text word = new Text();    
+    public void map(LongWritable key, Text value,OutputCollector<Text,IntWritable> output,     
+           Reporter reporter) throws IOException{    
+        String line = value.toString();    
+        StringTokenizer  tokenizer = new StringTokenizer(line);    
+        while (tokenizer.hasMoreTokens()){    
+            word.set(tokenizer.nextToken());    
+            output.collect(word, one);    
+        }    
+    }    
+}  
+
+2)	WCReducer.java
+package com.javatpoint;  
+    import java.io.IOException;    
+    import java.util.Iterator;    
+    import org.apache.hadoop.io.IntWritable;    
+    import org.apache.hadoop.io.Text;    
+    import org.apache.hadoop.mapred.MapReduceBase;    
+    import org.apache.hadoop.mapred.OutputCollector;    
+    import org.apache.hadoop.mapred.Reducer;    
+    import org.apache.hadoop.mapred.Reporter;    
+        
+    public class WC_Reducer  extends MapReduceBase implements Reducer<Text,IntWritable,Text,IntWritable> {    
+    public void reduce(Text key, Iterator<IntWritable> values,OutputCollector<Text,IntWritable> output,    
+     Reporter reporter) throws IOException {    
+    int sum=0;    
+    while (values.hasNext()) {    
+    sum+=values.next().get();    
+    }    
+    output.collect(key,new IntWritable(sum));    
+    }    
+    }
+
+
+3)	WCMapper.java
+
+package com.javatpoint;  
+  
+    import java.io.IOException;    
+    import org.apache.hadoop.fs.Path;    
+    import org.apache.hadoop.io.IntWritable;    
+    import org.apache.hadoop.io.Text;    
+    import org.apache.hadoop.mapred.FileInputFormat;    
+    import org.apache.hadoop.mapred.FileOutputFormat;    
+    import org.apache.hadoop.mapred.JobClient;    
+    import org.apache.hadoop.mapred.JobConf;    
+    import org.apache.hadoop.mapred.TextInputFormat;    
+    import org.apache.hadoop.mapred.TextOutputFormat;    
+    public class WC_Runner {    
+        public static void main(String[] args) throws IOException{    
+            JobConf conf = new JobConf(WC_Runner.class);    
+            conf.setJobName("WordCount");    
+            conf.setOutputKeyClass(Text.class);    
+            conf.setOutputValueClass(IntWritable.class);            
+            conf.setMapperClass(WC_Mapper.class);    
+            conf.setCombinerClass(WC_Reducer.class);    
+            conf.setReducerClass(WC_Reducer.class);         
+            conf.setInputFormat(TextInputFormat.class);    
+            conf.setOutputFormat(TextOutputFormat.class);           
+            FileInputFormat.setInputPaths(conf,new Path(args[0]));    
+            FileOutputFormat.setOutputPath(conf,new Path(args[1]));     
+            JobClient.runJob(conf);    
+        }    
+    }    
+
+
+Now run the code 
+ 
+
+	
+Conclusion:
+	Hence, we have performed word count map reduce program successfully.
+

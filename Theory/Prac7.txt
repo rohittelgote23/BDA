@@ -1,0 +1,61 @@
+
+Aim : Write Pig Latin scripts sort, group, join and filter your data.
+
+Theory : 
+What is Apache Pig :
+Apache Pig is a high-level data flow platform for executing MapReduce programs of Hadoop. The language used for Pig is Pig Latin.
+The Pig scripts get internally converted to Map Reduce jobs and get executed on data stored in HDFS. Apart from that, Pig can also execute its job in Apache Tez or Apache Spark.
+Pig can handle any type of data, i.e., structured, semi-structured or unstructured and stores the corresponding results into Hadoop Data File System. Every task which can be achieved using PIG can also be achieved using java used in MapReduce.
+Advantages of Apache Pig
+o	Less code - The Pig consumes less line of code to perform any operation.
+o	Reusability - The Pig code is flexible enough to reuse again.
+o	Nested data types - The Pig provides a useful concept of nested data types like tuple, bag, and map.
+Apache Pig Execution Modes:
+Apache Pig has two execution modes:
+•	Local Mode
+In ‘Local Mode’, the source data would be picked from the local directory in your computer system. The MapReduce mode can be specified using ‘pig –x local’ command.
+ 
+•	MapReduce Mode: 
+To run Pig in MapReduce mode, you need access to Hadoop cluster and HDFS installation. The MapReduce mode can be specified using the ‘pig’ command.
+ 
+
+The Apache Pig operators can be classified as: Relational and Diagnostic.
+Relational Operators:
+Relational operators are the main tools Pig Latin provides to operate on the data. It allows you to transform the data by sorting, grouping, joining, projecting and filtering. This section covers the basic relational operators.
+
+ORDER BY:
+Order By is used to sort a relation based on one or more fields. You can do sorting in ascending or descending order using ASC and DESC keywords.
+GROUP:
+The GROUP operator groups together the tuples with the same group key (key field). The key field will be a tuple if the group key has more than one field, otherwise it will be the same type as that of the group key. The result of a GROUP operation is a relation that includes one tuple per group.
+JOIN:
+JOIN operator is used to perform an inner, equijoin join of two or more relations based on common field values. The JOIN operator always performs an inner join. Inner joins ignore null keys, so it makes sense to filter them out before the join.
+FILTER:
+This operator selects tuples from a relation based on a condition.
+
+
+OUTPUT :
+1)	Load file in pig
+n = load 'C:\\Users\\Rohit\\Desktop\\pig\\data.txt' using PigStorage(',') as (name:chararray,age:int,city:chararray,study:chararray,mobno:int);
+
+ 
+2)	ORDER : 
+b = order data by age desc;
+dump b;
+
+3)	Group :
+g = group data by study;
+dump g;
+
+4)	Join :
+d = join data by name, b by name;
+dump d;
+
+5)	Filter :
+c = filter data by (age>18);
+dump c; 
+
+Conclusion : 
+
+	Hence we have successfully used Pig Latin Script Order, join, group and filter on the data.
+
+

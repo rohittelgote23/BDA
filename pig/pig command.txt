@@ -1,0 +1,33 @@
+new = load 'C:\\Users\\Rohit\\Desktop\\pig\\data.txt' using PigStorage(',') as (name:chararray,age:int,location:chararray,study:chararray,mobno:int);
+
+b = order new by age desc;
+
+c = filter new by (age>18);
+
+d = group new by study;
+
+ne = join new by name,b by name;
+
+
+word count
+
+data = load 'C:\\Users\\Rohit\\Desktop\\word.txt' as (line:chararray);
+
+words = foreach data generate FLATTEN (TOKENIZE(line)) as word;
+
+word_grp = group words by word;
+
+word_count = foreach word_grp generate group, COUNT(words);
+
+
+max in temp 
+
+a = load 'C:\\Users\\Rohit\\Desktop\\pig\\temp.txt' using PigStorage(',') as (year:int,temp:int);
+
+t = group a by year ;
+
+max = foreach t generate group, MAX(a.temp);
+
+
+
+

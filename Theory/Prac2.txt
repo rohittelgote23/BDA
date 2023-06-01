@@ -1,0 +1,62 @@
+
+Aim: Implement the following file management tasks in Hadoop:
+i.	Adding files and directories
+ii.	Retrieving files 
+iii.	Deleting files
+
+DESCRIPTION:- 
+ HDFS is a scalable distributed filesystem designed to scale to petabytes of data while running on top of the underlying filesystem of the operating system. HDFS keeps track of where the data resides in a network by associating the name of its rack (or network switch) with the dataset. This allows Hadoop to efficiently schedule tasks to those nodes that contain data, or which are nearest to it, optimizing bandwidth utilization. Hadoop provides a set of command line utilities that work similarly to the Linux file commands, and serve as your primary interface with 
+HDFS. We‘re going to have a look into HDFS by interacting with it from the command line. We will take a look at the most common file management tasks in Hadoop, which include: 
+•	Adding files and directories to HDFS 
+•	Retrieving files from HDFS to local filesystem 
+•	Deleting files from HDFS 
+SYNTAX AND COMMANDS TO ADD, RETRIEVE AND DELETE DATA FROM HDFS 
+Hadoop - HDFS Operations
+Starting HDFS
+Initially you have to format the configured HDFS file system, open namenode (HDFS server), and execute the following command.
+$ hadoop namenode -format
+After formatting the HDFS, start the distributed file system. The following command will start the namenode as well as the data nodes as cluster.
+$ start-dfs.cmd
+
+Listing Files in HDFS
+After loading the information in the server, we can find the list of files in a directory, status of a file, using ‘ls’. Given below is the syntax of ls that you can pass to a directory or a filename as an argument.
+$ $HADOOP_HOME/bin/hadoop fs -ls <args>
+
+Inserting Data into HDFS
+Assume we have data in the file called file.txt in the local system which is ought to be saved in the hdfs file system. Follow the steps given below to insert the required file in the Hadoop file system.
+Step 1
+You have to create an input directory.
+$ $HADOOP_HOME/bin/hadoop fs -mkdir /user/input
+Step 2
+Transfer and store a data file from local systems to the Hadoop file system using the put command.
+$ $HADOOP_HOME/bin/hadoop fs -put /home/file.txt /user/input
+Step 3
+You can verify the file using ls command.
+$ $HADOOP_HOME/bin/hadoop fs -ls /user/input
+Retrieving Data from HDFS
+Assume we have a file in HDFS called outfile. Given below is a simple demonstration for retrieving the required file from the Hadoop file system.
+Step 1
+Initially, view the data from HDFS using cat command.
+$ $HADOOP_HOME/bin/hadoop fs -cat /user/output/outfile
+Step 2
+Get the file from HDFS to the local file system using get command.
+$ $HADOOP_HOME/bin/hadoop fs -get /user/output/ /home/hadoop_tp/
+
+
+Deleting Data from HDFS
+Assume we have a file in HDFS called abc.txt Given below is a simple demonstration for deleting the required file from the Hadoop file system.
+Step 1
+Initially, view the data from HDFS using cat command.
+$ $HADOOP_HOME/bin/hadoop fs -cat /user/output/abc.txt
+Step 2
+Get the file from HDFS to the local file system using get command.
+$ $HADOOP_HOME/bin/hadoop fs -rm /user/output/abc.txt
+
+
+Shutting Down the HDFS
+You can shut down the HDFS by using the following command.
+$ stop-dfs.cmd
+
+
+Conclusion: Thus, we have implemented the file management tasks in Hadoop.
+

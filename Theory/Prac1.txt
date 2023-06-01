@@ -1,0 +1,187 @@
+
+Aim: Install Hadoop system.
+
+ Hadoop software can be installed in three modes of operation:
+• Stand Alone Mode: Hadoop is a distributed software and is designed to run on a commodity of machines. However, we can install it on a single node in stand-alone mode. In this mode, Hadoop software runs as a single monolithic java process. This mode is extremely useful for debugging purpose. You can first test run your Map-Reduce application in this mode on small data, before actually executing it on cluster with big data.
+• Pseudo Distributed Mode: In this mode also, Hadoop software is installed on a Single Node. Various daemons of Hadoop will run on the same machine as separate java processes. Hence all the daemons namely NameNode, DataNode, SecondaryNameNode, JobTracker, TaskTracker run on single machine.
+• Fully Distributed Mode: In Fully Distributed Mode, the daemons NameNode, JobTracker, SecondaryNameNode (Optional and can be run on a separate node) run on the Master Node.The daemons DataNode and TaskTracker run on the Slave Node.
+
+Following are the steps of Hadoop Installation on Ubuntu in Stand Alone mode:
+Step 1) Add a Hadoop system user using below command
+sudo addgroup hadoop_
+
+sudo adduser --ingroup hadoop_ hduser_
+
+Enter your password, name and other details.
+NOTE: There is a possibility of below-mentioned error in this setup and installation process.
+“hduser is not in the sudoers file. This incident will be reported.”
+ 
+This error can be resolved by Login as a root user
+ 
+sudo adduser hduser_ sudo
+
+Re-login as hduser_
+
+Step 2) Configure SSH
+In order to manage nodes in a cluster, Hadoop requires SSH access
+First, switch user, enter the following command
+su - hduser_
+
+ 
+This command will create a new key.
+ssh-keygen -t rsa -P ""
+ 
+Enable SSH access to local machine using this key.
+cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+ 
+Now test SSH setup by connecting to localhost as ‘hduser’ user.
+ssh localhost
+ Note: Please note, if you see below error in response to ‘ssh localhost’, then there is a possibility that SSH is not available on this system-
+ 
+To resolve this –
+Purge SSH using,
+sudo apt-get purge openssh-server
+It is good practice to purge before the start of installation
+ 
+Install SSH using the command-
+sudo apt-get install openssh-server
+ 
+
+Step 3) Next step is to Download Hadoop
+
+Select Stable
+ 
+Once a download is complete, navigate to the directory containing the tar file
+ 
+Enter,
+sudo tar xzf hadoop-2.2.0.tar.gz
+ 
+Now, rename hadoop-2.2.0 as hadoop
+sudo mv hadoop-2.2.0 hadoop
+ 
+sudo chown -R hduser_:hadoop_ hadoop
+ 
+Part 2) Configure Hadoop
+
+Step 1) Modify ~/.bashrc file
+Add following lines to end of file ~/.bashrc
+#Set HADOOP_HOME
+export HADOOP_HOME=<Installation Directory of Hadoop>
+#Set JAVA_HOME
+export JAVA_HOME=<Installation Directory of Java>
+
+
+# Add bin/ directory of Hadoop to PATH
+export PATH=$PATH:$HADOOP_HOME/bin
+ 
+Now, source this environment configuration using below command
+. ~/.bashrc
+ 
+Step 2) Configurations related to HDFS
+Set JAVA_HOME inside file $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+ 
+ 
+With
+ 
+There are two parameters in $HADOOP_HOME/etc/hadoop/core-site.xml which need to be set-
+1. ‘hadoop.tmp.dir’ – Used to specify a directory which will be used by Hadoop to store its data files.
+2. ‘fs.default.name’ – This specifies the default file system.
+To set these parameters, open core-site.xml
+sudo gedit $HADOOP_HOME/etc/hadoop/core-site.xml
+ 
+
+Copy below line in between tags <configuration></configuration>
+<property>
+<name>hadoop.tmp.dir</name>
+<value>/app/hadoop/tmp</value>
+<description>Parent directory for other temporary directories.</description>
+</property>
+<property>
+<name>fs.defaultFS </name>
+<value>hdfs://localhost:54310</value>
+<description>The name of the default file system. </description>
+</property>
+ 
+Navigate to the directory $HADOOP_HOME/etc/Hadoop
+ 
+Now, create the directory mentioned in core-site.xml
+sudo mkdir -p <Path of Directory used in above setting>
+ 
+Grant permissions to the directory
+sudo chown -R hduser_:Hadoop_ <Path of Directory created in above step>
+ 
+sudo chmod 750 <Path of Directory created in above step>
+ 
+Step 3) Map Reduce Configuration
+Before you begin with these configurations, lets set HADOOP_HOME path
+sudo gedit /etc/profile.d/hadoop.sh
+And Enter
+export HADOOP_HOME=/home/guru99/Downloads/Hadoop
+ 
+Next enter
+sudo chmod +x /etc/profile.d/hadoop.sh
+ 
+Exit the Terminal and restart again
+Type echo $HADOOP_HOME. To verify the path
+ 
+Now copy files
+sudo cp $HADOOP_HOME/etc/hadoop/mapred-site.xml.template $HADOOP_HOME/etc/hadoop/mapred-site.xml
+ 
+Open the mapred-site.xml file
+sudo gedit $HADOOP_HOME/etc/hadoop/mapred-site.xml
+ 
+Add below lines of setting in between tags <configuration> and </configuration>
+<property>
+<name>mapreduce.jobtracker.address</name>
+<value>localhost:54311</value>
+<description>MapReduce job tracker runs at this host and port.
+</description>
+</property>
+ 
+Open $HADOOP_HOME/etc/hadoop/hdfs-site.xml as below,
+sudo gedit $HADOOP_HOME/etc/hadoop/hdfs-site.xml
+ 
+Add below lines of setting between tags <configuration> and </configuration>
+<property>
+<name>dfs.replication</name>
+<value>1</value>
+<description>Default block replication.</description>
+</property>
+<property>
+<name>dfs.datanode.data.dir</name>
+<value>/home/hduser_/hdfs</value>
+</property>
+ 
+Create a directory specified in above setting-
+sudo mkdir -p <Path of Directory used in above setting>
+sudo mkdir -p /home/hduser_/hdfs
+ 
+sudo chown -R hduser_:hadoop_ <Path of Directory created in above step>
+sudo chown -R hduser_:hadoop_ /home/hduser_/hdfs
+ 
+sudo chmod 750 <Path of Directory created in above step>
+sudo chmod 750 /home/hduser_/hdfs
+ 
+Step 4) Before we start Hadoop for the first time, format HDFS using below command
+$HADOOP_HOME/bin/hdfs namenode -format
+ 
+Step 5) Start Hadoop single node cluster using below command
+$HADOOP_HOME/sbin/start-dfs.cmd
+An output of above command
+ 
+$HADOOP_HOME/sbin/start-yarn.cmd
+ 
+Using ‘jps’ tool/command, verify whether all the Hadoop related processes are running or not.
+ 
+If  Hadoop  has started successfully then an output of jps should show NameNode, NodeManager, ResourceManager, SecondaryNameNode, DataNode.
+Step 6) Stopping Hadoop
+$HADOOP_HOME/sbin/stop-dfs.cmd
+
+ 
+$HADOOP_HOME/sbin/stop-yarn.cmd
+
+ 
+
+Conclusion:  In this way, we have installed Hadoop in our Ubuntu operating system. 
+
+

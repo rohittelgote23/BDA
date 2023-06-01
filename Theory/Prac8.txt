@@ -1,0 +1,82 @@
+
+Aim: Run the Pig Latin Scripts to find Word Count.
+Theory:
+	Apache Pig is a high-level platform for creating programs that run on Apache Hadoop. The language for this platform is called Pig Latin. Pig can execute its Hadoop jobs   in   Map Reduce, Apache Tez, or Apache Spark. Pig Latin abstracts the programming from the    Java MapReduce idiom into a notation which makes MapReduce programming high level, similar to that of SQL for RDBMSs. Pig Latin can be extended   using User Defined Functions(UDFs) which the user can write in Java, Python, JavaScript, Ruby or Groovy and then call directly from the language.
+Pig Latin is procedural and fits very naturally in the pipeline paradigm while SQL  is instead declarative. In SQL users can specify that data from two tables must be joined, but not what join implementation to use (You can specify the implementation of JOIN in SQL, thus "..for many SQL applications the query writer may not have enough knowledge of the data or enough expertise to specify an appropriate join algorithm."). Pig Latin allows users to specify an implementation or aspects of an implementation to be used in executing a script in several ways. 
+In effect, Pig Latin programming is similar to specifying a query execution plan, making it easier for programmers to explicitly control the flow of their data processing task.
+SQL is oriented around queries that produce a single result. SQL handles trees naturally, but has no built in mechanism for splitting a data processing stream and applying different operators to each sub-stream. Pig Latin script describes a directed acyclic graph (DAG) rather than a pipeline. Pig Latin's ability to include user code at any point in the pipeline is useful for pipeline development. If SQL is used, data must first be imported into the database, and then the cleansing and transformation process can begin.
+Algorithm :
+Assume we have data in the file like below. 
+This is a hadoop post hadoop is a bigdata technology.
+And we want to generate output for count of each word like below
+ (a,2)
+(is,2)
+(This,1)
+(class,1)
+(hadoop,2)
+Now we will see in steps how to generate the same using Pig latin :
+1.	Load the data from HDFS :
+Use Load statement to load the data into a relation .
+As keyword used to declare column names, as we dont have any columns, we declared only one column named line.
+ input = LOAD '/path/to/file/' AS(line:Chararray);
+2.	 Convert the Sentence into words :
+The data we have is in sentences. So we have to convert that data into words using
+TOKENIZE Function.
+(TOKENIZE(line));
+(or)
+If we have any delimeter like space we can specify as
+(TOKENIZE(line,' '));
+
+Output will be like this:
+({(This),(is),(a),(hadoop),(class)})
+but we have to convert it into multiple rows like below
+(This)
+(is)
+(a)
+(hadoop)
+(class)
+
+
+3.	Convert Column into Rows :
+I mean we have to convert every line of data into multiple rows ,for this we have function called  FLATTEN in pig.
+Using FLATTEN function the bag is converted into tuple, means the array of strings
+converted into multiple rows.
+Words = FOREACH input GENERATE FLATTEN(TOKENIZE(line,' ')) AS word;
+Then the ouput is like below:
+(This)
+(is)
+(a)
+(hadoop)
+(class)
+4.	Apply GROUP BY :
+We have to count each word occurance, for that we have to group all the words.
+Grouped = GROUP words BY word;
+5.	 Generate word count  :
+wordcount = FOREACH Grouped GENERATE group, COUNT(words);
+
+ We can print the word count on console using Dump.
+DUMP wordcount;
+Output will be like below.
+(a,2)
+(is,2)
+(This,1)
+(class,1)
+(hadoop,2)
+Below is the complete program for the same :
+input = LOAD '/path/to/file/' AS(line:Chararray);
+Words = FOREACH input GENERATE FLATTEN(TOKENIZE(line,' ')) AS word;
+Grouped = GROUP words BY word;
+wordcount = FOREACH Grouped GENERATE group, COUNT(words);
+
+Input/Output :
+Input :
+ 
+1.	Checking Pig Installed or Not :
+ 
+2.	Commands:
+
+3.	Output of wordcount: 
+ 
+
+Conclusion : 
+		Hence, we have Successfully Performed Word Count with the help of Pig Latin Script. 

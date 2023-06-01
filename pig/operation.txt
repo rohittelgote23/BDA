@@ -1,0 +1,9 @@
+data = LOAD 'C:\\Users\\Rohit\\Desktop\\pig\\input.txt' USING PigStorage (' ') AS (name:chararray, age:int, city:chararray);
+
+b = ORDER data BY age DESC;
+c = FILTER data BY (age>18);
+d = GROUP data BY city;
+
+data2 = LOAD 'C:\\Users\\Rohit\\Desktop\\pig\\input.txt' USING PigStorage (' ') AS (name:chararray, age:int, city:chararray);
+
+e = JOIN data BY name,data2 BY name;

@@ -1,0 +1,105 @@
+
+Aim: Study of Pig latin script.
+Theory: 
+Pig Scripts
+Use Pig scripts to place Pig Latin statements and Pig commands in a single file. While not required, it is good practice to identify the file using the *.pig extension.
+You can run Pig scripts from the command line and from the Grunt shell (see the run and exec commands).
+Pig scripts allow you to pass values to parameters using parameter substitution.
+Comments in Scripts
+You can include comments in Pig scripts:
+●	For multi-line comments use /* …. */
+●	For single-line comments use --
+/* myscript.pig
+My script is simple.
+It includes three Pig Latin statements.
+*/
+
+A = LOAD 'student' USING PigStorage() AS (name:chararray, age:int, gpa:float); -- loading data
+B = FOREACH A GENERATE name;  -- transforming data
+DUMP B;  -- retrieving results
+
+
+Testing your Scripts with Pig Unit 
+Pig unit is nothing but unit testing of your Pig scripts.
+ 
+Unit Testing 
+Unit Testing is a software development process in which the smallest testable parts of an application, called units, are individually and independently scrutinized for proper operation. Unit testing is often automated but it can also be done manually. 
+Pig Unit
+ 	With Pig Unit you can perform unit testing, regression testing, and rapid prototyping. No cluster set up is required if you run Pig in local mode.
+ Pig Unit uses the famous Java Junit framework class to test the Pig scripts. First, we will write a Java class which junit uses to run and inside that class we can provide our Pig scripts, input files and the expected output, so that it will automatically run the scripts and return the results. With the help of Pig unit we can reduce the time of debugging. 
+
+Unit Testing your own Pig script 
+For unit testing your own Pig script, we need to have maven and Pig eclipse plugin installed in your eclipse. 
+
+Maven Plugin for Eclipse
+ Open Eclipse IDE and follow the below steps: 
+1. Click Help -> Install New Software… 
+2. Click ‘Add’ button at top right corner 
+3. In the pop up window, fill up the ‘Name’ as ‘M2Eclipse’ and ‘Location’ as   ‘http://download.eclipse.org/technology/m2e/releases’or ‘http://download.eclipse.org/technology/m2e/milestones/1.0’.
+ 4. Now, click ‘OK’. 
+
+Pig Eclipse plugin 
+Follow the below steps to install the Pig Eclipse plugin:
+ 1. Click ‘Help’ -> Install New Software…
+ 2. Click ‘Add’ button at top right corner 
+ 3. In the pop up window, fill up ‘Name’ as ‘pigEditor’ and ‘Location’ as ‘https://pig-eclipse.googlecode.com/svn/trunk/update_site’.
+ 4. Now, click ‘OK’. 
+
+After the installation of above specified plugins, restart your Eclipse. 
+Now, follow the series of step mentioned below to create a maven project. File–>New–>Other–>Maven–>Maven Project 
+Next, open the pom.xml file, following the below steps.
+ src–>target–>pom.xml 
+then, copy the repositories and dependencies.
+ Let’s now run a sample word count program using Junit. 
+Below is the Pig script for performing word count: 
+A = load '/home/kiran/workspace/pigunit/input.data'; 
+B = foreach A generate flatten(TOKENIZE((chararray)$0)) as word; 
+C = group B by word; 
+D = foreach C generate COUNT(B), group; 
+dump D; 
+
+We have saved the above lines in a file called wordcount.pig and the input data is saved in the file with name ‘input.data’. 
+PigTest pigTest = new PigTest("/home/kiran/workspace/pigunit/wordcount.pig"); 
+
+Here, you can see that we have created an object called ‘pigTest’ and we have passed our Pig script into it. The output will be given inside the assertOutput method. 
+pigTest.assertOutput("D", output); 
+
+In this case, our statement to be dumped is D, so we have given the alias name as ‘D’ within the double quotes and the expected output is stored in the String array output. So, we have given the output variable name as the output.
+
+ Now, let’s have a look at the complete program. 
+package java1.pigunit1; 
+import junit.framework.TestCase;
+ import org.apache.pig.pigunit.PigTest; 
+public class AppTest extends TestCase { 
+public void testwordcount() throws Exception {
+ PigTest pigTest = new 
+PigTest("/home/kiran/workspace/pigunit/wordcount.pig");
+ String[] output = { "(1,all)","(1,from)","(1,Hello)","(1,Brindavan!)" }; pigTest.assertOutput("D", output);
+ }
+ } 
+
+Now, let’s run this program using Junit Test.
+ Right Click–>Run As–>Junit Test 
+
+What is Tokenize?
+Example: 
+Consider we have a data in a file mentioned below 
+USA USA EUROPE EUROPE EUROPE EUROPE USA USA USA EUROPE EUROPE USA EUROPE USA
+
+ I'm trying to find out number of USA and EUROPE. 
+1) inp = LOAD '/user/countries.txt' as (singleline);
+ dump inp; 
+
+Output 
+(USA USA EUROPE EUROPE EUROPE EUROPE USA) (USA USA EUROPE EUROPE USA) (EUROPE USA) 
+
+2) tknz = FOREACH inp GENERATE TOKENIZE(singleline) as Words; 
+dump tknz; 
+
+Output 
+{(USA),(USA),(EUROPE),(EUROPE),(EUROPE),(EUROPE),(USA)}   
+{(USA),(USA),(EUROPE),(EUROPE),(USA)}
+{(EUROPE),(USA)}
+
+Conclusion: In this practical we have studied the pig latin script. 
+

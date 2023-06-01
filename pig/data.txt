@@ -1,0 +1,5 @@
+Rohit,21,Akola,Engineering,9089868
+Sachin,24,Jalgaon,Engineering,798797
+Adesh,19,Akola,Microbiology,686868
+Durgesh,16,Buldhana,Arts,979798
+Pradynesh,21,Nagpur,Engineering,079878

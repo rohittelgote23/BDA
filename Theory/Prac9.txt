@@ -1,0 +1,53 @@
+
+Aim: Run the Pig Latin Scripts to find a max temp for each and every year.
+
+RESOURCES:
+VMWare, Web Browser, 4 GB RAM, 80 GB Hard Disk
+
+PROGRAM LOGIC:
+Run the Pig Latin Scripts to find a max temp for each and every year
+-- max_temp.pig: Finds the maximum temperature by year records = LOAD 'input/ncdc/micro-tab/sample.txt' AS (year:chararray, temperature:int, quality:int);
+filtered_records = FILTER records BY temperature != 9999 AND
+(quality == 0 OR quality == 1 OR quality == 4 OR quality == 5 OR quality == 9); 
+grouped_records = GROUP filtered_records BY year;    
+max_temp = FOREACH grouped_records GENERATE group, M    AX(filtered_records.temperature);
+
+DUMP max_temp;
+
+INPUT / OUTPUT:
+2011,45
+2011,44
+2012,41
+2004,40
+2004,42
+2020,44
+2004,42
+2020,43
+2011,46
+2012,43
+
+
+max in temp 
+
+a = load 'C:\\Users\\Rohit\\Desktop\\pig\\temp.txt' using PigStorage(',') as (year:int,temp:int);
+
+t = group a by year ;
+
+max = foreach t generate group, MAX(a.temp);
+
+dump max;
+
+2. The LOAD operator takes a URI argument; here we are just using a local file, but we could refer to an HDFS URI. The AS clause (which is optional) gives the fields names to make it convenient to refer to them in subsequent statements.
+A = load 'C:\\Users\\Rohit\\Desktop\\pig\\temp.txt' using PigStorage(',') as (year:int,temp:int);
+B = ORDER A BY Temp DESC;
+C = LIMIT B 1;
+D = FOREACH C Generate Temp;
+Dump D;
+
+Output:
+1.	Start the pig by using pig -x local command.
+
+2.	Commands 
+	
+Conclusion: In this practical, we have successfully find out the max temp for each and  every year with the help of Pig Latin Script.
+
